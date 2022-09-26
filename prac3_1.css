@@ -1,0 +1,52 @@
+table,
+th,
+td {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+th {
+	background-color: lightblue;
+}
+td {
+	padding: 5px;
+}
+
+.subth {
+	background-color: lightgray;
+}
+#information {
+	display: flex;
+	justify-content: space-between;
+	flex-direction: column;
+}
+#header {
+	display: flex;
+	justify-content: space-between;
+	flex-direction: row;
+	align-items: baseline;
+	width: 95%;
+	margin: 0 auto;
+	font-weight: bold;
+}
+#header-left {
+	text-align: left;
+	font-size: 2.5rem;
+	color: navy;
+}
+#header-right {
+	text-align: end;
+	color: green;
+}
+#profile-img {
+	text-align: center;
+	align-items: center;
+}
+#default-information,
+#biographical-information,
+#academic-information,
+#family-information,
+#career-information,
+#qualifications-information,
+table {
+	width: 100%;
+}

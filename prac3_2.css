@@ -1,0 +1,103 @@
+th,
+td {
+	border: 0.5px dashed black;
+	border-radius: 10px;
+	border-collapse: collapse;
+	width: unset;
+}
+th {
+	border: 2px solid black !important;
+}
+th:hover,
+td:hover {
+	font-weight: bolder;
+	background-color: lightgoldenrodyellow;
+}
+td:hover {
+	color: red !important;
+}
+th {
+	background-color: lavender;
+}
+td {
+	padding: 5px;
+}
+
+body {
+	max-width: 95% !important;
+}
+
+.subth {
+	background-color: lavenderblush;
+}
+
+h3 {
+	display: inline-block;
+}
+h3,
+table {
+	margin: 0;
+}
+table {
+	display: inline-table;
+}
+#information {
+	max-width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+#header {
+	display: flex;
+	justify-content: space-between;
+	flex-direction: column;
+	align-items: center;
+	width: 95%;
+	align-self: center;
+	margin: 0 auto;
+	font-weight: bold;
+}
+#header-left {
+	font-size: 2.5rem;
+	color: navy;
+	margin: 30px 0 0 0;
+	font-family: "Courier New", Courier, monospace;
+}
+#header-right {
+	width: 100%;
+	text-align: end;
+	color: green;
+	margin: 0 0 10px 0;
+	font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+		"Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+#profile-img {
+	text-align: center;
+	align-items: center;
+}
+
+#default-information,
+#biographical-information,
+#academic-information,
+#family-information,
+#career-information,
+#qualifications-information {
+	display: flex;
+	flex-direction: column;
+	height: fit-content;
+	width: fit-content;
+	min-width: 49%;
+}
+#default-information:hover,
+#biographical-information:hover,
+#academic-information:hover,
+#family-information:hover,
+#career-information:hover,
+#qualifications-information:hover {
+	font-weight: bolder;
+}
+
+td:hover {
+	transition: color 1s;
+}
