@@ -1,0 +1,243 @@
+<html>
+	<head>
+		<title>Practice 5</title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			let equation = prompt("Enter an equation").trim();
+			const op = { "*": 1, "/": 1, "+": 2, "-": 2, "(": 3, ")": 3 };
+			let newequation = "";
+			let result = 0;
+			let par = 0;
+			let isNA = false;
+			if (equation.length == 0) {
+				isNA = true;
+			} else {
+				switch (equation[0]) {
+					case "+":
+					case "*":
+					case "/":
+					case ")":
+						isNA = true;
+						break;
+					case "(":
+						par++;
+					case "0":
+					case "1":
+					case "2":
+					case "3":
+					case "4":
+					case "5":
+					case "6":
+					case "7":
+					case "8":
+					case "9":
+						newequation += equation[0];
+						break;
+					case "-":
+						newequation += "=";
+						break;
+					default:
+						isNA = true;
+						break;
+				}
+				for (let i = 1; !isNA && i < equation.length; i++) {
+					if (par < 0) {
+						isNA = true;
+						break;
+					}
+					if (
+						equation[i] == "(" ||
+						equation[i] == ")" ||
+						(equation[i] >= "0" && equation[i] <= "9")
+					) {
+						if (equation[i] == "(") {
+							par++;
+						} else if (equation[i] == ")") {
+							par--;
+						}
+						newequation += equation[i];
+					} else if (equation[i] == "-") {
+						if (
+							(newequation[newequation.length - 1] >= "0" &&
+								newequation[newequation.length - 1] <= "9") ||
+							newequation[newequation.length - 1] == "("
+						) {
+							newequation += equation[i];
+						} else {
+							newequation += "=";
+						}
+					} else if (
+						equation[i] == "+" ||
+						equation[i] == "*" ||
+						equation[i] == "/"
+					) {
+						if (
+							newequation[newequation.length - 1] == "(" ||
+							newequation[newequation.length - 1] == "+" ||
+							newequation[newequation.length - 1] == "-" ||
+							newequation[newequation.length - 1] == "=" ||
+							newequation[newequation.length - 1] == "*" ||
+							newequation[newequation.length - 1] == "/"
+						) {
+							isNA = true;
+							break;
+						} else {
+							newequation += equation[i];
+						}
+					} else if (equation[i] == " ") {
+						if (equation[i + 1] == " ") {
+							continue;
+						} else if (
+							equation[i + 1] >= "0" &&
+							equation[i + 1] <= "9" &&
+							newequation[newequation.length - 1] >= "0" &&
+							newequation[newequation.length - 1] <= "9"
+						) {
+							isNA = true;
+							break;
+						} else if (
+							(equation[i + 1] == "+" ||
+								equation[i + 1] == "*" ||
+								equation[i + 1] == "/") &&
+							(newequation[newequation.length - 1] == "+" ||
+								newequation[newequation.length - 1] == "-" ||
+								newequation[newequation.length - 1] == "=" ||
+								newequation[newequation.length - 1] == "*" ||
+								newequation[newequation.length - 1] == "/")
+						) {
+							isNA = true;
+							break;
+						} else if (
+							equation[i] == "(" &&
+							newequation[newequation.length - 1] == ")"
+						) {
+							isNA = true;
+						} else if (
+							equation[i] == ")" &&
+							newequation[newequation.length - 1] == "("
+						) {
+							isNA = true;
+						} else {
+							continue;
+						}
+					} else {
+						isNA = true;
+						break;
+					}
+				}
+			}
+			if (
+				par != 0 ||
+				((newequation[newequation.length - 1] < "0" ||
+					newequation[newequation.length - 1] > "9") &&
+					newequation[newequation.length - 1] != ")")
+			) {
+				isNA = true;
+			}
+			if (isNA) {
+				document.write("NA");
+			} else {
+				let neweqsplit = [];
+				let prev = 0;
+				for (let i = 0; i < newequation.length; i++) {
+					if (
+						newequation[i] == "+" ||
+						newequation[i] == "-" ||
+						newequation[i] == "*" ||
+						newequation[i] == "/" ||
+						newequation[i] == "(" ||
+						newequation[i] == ")"
+					) {
+						let x = 0;
+						while (newequation[prev] == "=") {
+							prev++;
+							x++;
+						}
+						let num = parseInt(newequation.substring(prev, i));
+						if (isNaN(num) && x % 2 == 1) {
+							neweqsplit.push(-1);
+							if (
+								neweqsplit.length > 0 &&
+								neweqsplit[neweqsplit.length - 2] == "/"
+							) {
+								neweqsplit.push("/");
+							} else {
+								neweqsplit.push("*");
+							}
+						}
+						if (prev != i) {
+							if (x % 2 == 0) {
+								neweqsplit.push(num);
+							} else {
+								neweqsplit.push(-num);
+							}
+						}
+						neweqsplit.push(newequation[i]);
+						prev = i + 1;
+					}
+				}
+				let x = 0;
+				while (newequation[prev] == "=") {
+					prev++;
+					x++;
+				}
+				let num = parseInt(newequation.substring(prev));
+				if (!isNaN(num)) {
+					if (x % 2 == 0) {
+						neweqsplit.push(num);
+					} else {
+						neweqsplit.push(-num);
+					}
+				}
+				let postfix = [];
+				let stk = [];
+				neweqsplit.forEach((x) => {
+					if (typeof x == "number") {
+						postfix.push(x);
+					} else if (x == "(") {
+						stk.push(x);
+					} else if (x == ")") {
+						while (stk[stk.length - 1] != "(") {
+							postfix.push(stk.pop());
+						}
+						stk.pop();
+					} else {
+						while (stk.length != 0 && op[stk[stk.length - 1]] <= op[x]) {
+							if (stk[stk.length - 1] != "(" && stk[stk.length - 1] != ")") {
+								postfix.push(stk[stk.length - 1]);
+							}
+							stk.pop();
+						}
+						stk.push(x);
+					}
+				});
+				while (stk.length != 0) {
+					if (stk[stk.length - 1] != "(" && stk[stk.length - 1] != ")") {
+						postfix.push(stk[stk.length - 1]);
+					}
+					stk.pop();
+				}
+				postfix.forEach((x) => {
+					if (typeof x == "number") {
+						stk.push(x);
+					} else {
+						let a = stk.pop();
+						let b = stk.pop();
+						if (x == "+") {
+							stk.push(b + a);
+						} else if (x == "-") {
+							stk.push(b - a);
+						} else if (x == "*") {
+							stk.push(b * a);
+						} else if (x == "/") {
+							stk.push(b / a);
+						}
+					}
+				});
+				let ans = stk.pop();
+				document.write(equation + " = " + ans);
+			}
+		</script>
+	</body>
+</html>
