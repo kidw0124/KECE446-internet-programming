@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="./practice6.css" />
+		<title>Practice 6</title>
+		<style>
+			button {
+				background-color: lightpink;
+				border-radius: 10px;
+				border: 2px solid black;
+				font-size: 15px;
+			}
+		</style>
+	</head>
+	<body
+		style="
+			max-width: 500px;
+			margin: 10px auto;
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+		"
+	>
+		<div class="calculator" id="calculator-2">
+			<div class="equation-panel" id="equation-panel-2"></div>
+			<div class="answer-panel" id="answer-panel-2"></div>
+			<div class="buttons-zip" id="buttons-zip-2">
+				<table>
+					<tr>
+						<td>
+							<button id="op">(</button>
+						</td>
+						<td>
+							<button id="cp">)</button>
+						</td>
+						<td colspan="2"></td>
+						<td style="text-align: center">
+							<img
+								src="https://cdn-icons-png.flaticon.com/512/6452/6452808.png"
+								style="height: 1rem"
+							/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button id="7">7</button>
+						</td>
+						<td>
+							<button id="8">8</button>
+						</td>
+						<td>
+							<button id="9">9</button>
+						</td>
+						<td>
+							<button id="divi">/</button>
+						</td>
+						<td>
+							<button id="back">←</button>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button id="4">4</button>
+						</td>
+						<td>
+							<button id="5">5</button>
+						</td>
+						<td>
+							<button id="6">6</button>
+						</td>
+						<td>
+							<button id="mul">*</button>
+						</td>
+						<td>
+							<button id="esc">C</button>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button id="1">1</button>
+						</td>
+						<td>
+							<button id="2">2</button>
+						</td>
+						<td>
+							<button id="3">3</button>
+						</td>
+						<td>
+							<button id="minu">-</button>
+						</td>
+						<td rowspan="2">
+							<button id="enter">
+								<br />
+								=
+								<br />
+								<br />
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<button id="0">0</button>
+						</td>
+						<td>
+							<button id="dot">.</button>
+						</td>
+						<td>
+							<button id="plus">+</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<script src="./practice6.js"></script>
+	</body>
+</html>
