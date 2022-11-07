@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			.baseconverter {
+				display: flex;
+				flex-direction: column;
+				border: none;
+				border-radius: 10px;
+				padding: 10px;
+				justify-content: center;
+				align-items: center;
+				background-color: #d7e3fc;
+				background-image: url("https://cdn-icons-png.flaticon.com/512/6247/6247204.png");
+				background-position: 100% 0%;
+				background-repeat: no-repeat;
+				background-size: auto 100%;
+			}
+			.input-panel,
+			.output-panel {
+				height: 2rem;
+				text-align: center;
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				width: 80%;
+				border: none;
+				margin: 5px;
+				background-color: #edf2fb;
+				font-family: "Courier New", Courier, monospace;
+				overflow-x: visible;
+				background-image: url("https://cdn-icons-png.flaticon.com/512/2942/2942909.png");
+				background-size: 100% 100%;
+				background-position: 0% 50%;
+				border-radius: 10px;
+			}
+			.buttons-zip {
+				width: 80%;
+				border: none;
+				margin: 0;
+				padding: 0;
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				margin: 5px;
+				padding: 5px 0px;
+				background-color: #edf2fb;
+				font-family: "Courier New", Courier, monospace;
+				background-image: url("https://cdn-icons-png.flaticon.com/512/2942/2942909.png");
+				background-size: auto;
+				background-position: 0% 50%;
+				border-radius: 10px;
+			}
+			#input-num {
+				background-image: url("https://cdn-icons-png.flaticon.com/512/2942/2942909.png");
+				background-position: 0% 70%;
+			}
+			#output-num {
+				background-image: url("https://cdn-icons-png.flaticon.com/512/2942/2942909.png");
+				background-position: 0% 80%;
+			}
+			#input-num,
+			#input-base,
+			#output-num,
+			#output-base,
+			select {
+				border: none;
+				margin: 0;
+				padding: 0;
+				background-color: #edf2fb;
+				font-family: "Courier New", Courier, monospace;
+				font-weight: bold;
+			}
+			button {
+				width: 3rem;
+				height: 100%;
+				background-color: #b6ccfe;
+				font-family: "Courier New", Courier, monospace;
+				font-weight: bold;
+				border: none;
+				border-radius: 10px;
+				font-size: 1.2rem;
+			}
+			button:hover {
+				background-color: #ccdbfd;
+			}
+			a,
+			a:visited {
+				color: blue;
+				font-weight: bold;
+			}
+			canvas {
+				z-index: 10;
+				pointer-events: none;
+				position: fixed;
+				top: 0;
+				transform: scale(1.1);
+			}
+		</style>
+		<title>Midterm</title>
+	</head>
+	<canvas id="canvas"></canvas>
+	<div id="stop"></div>
+	<body style="max-width: 500px; margin: 10px auto">
+		<h3>2020330017 김동우</h3>
+		<div class="baseconverter">
+			<script type="text/javascript">
+				let nums = [
+					"0",
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"A",
+					"B",
+					"C",
+					"D",
+					"E",
+					"F",
+				];
+			</script>
+			<script type="text/javascript">
+				function fire() {
+					// globals
+					var canvas;
+					var ctx;
+					var W;
+					var H;
+					var mp = 150; //max particles
+					var particles = [];
+					var angle = 0;
+					var tiltAngle = 0;
+					var confettiActive = true;
+					var animationComplete = true;
+					var deactivationTimerHandler;
+					var reactivationTimerHandler;
+					var animationHandler;
+
+					// objects
+
+					var particleColors = {
+						colorOptions: [
+							"DodgerBlue",
+							"OliveDrab",
+							"Gold",
+							"pink",
+							"SlateBlue",
+							"lightblue",
+							"Violet",
+							"PaleGreen",
+							"SteelBlue",
+							"SandyBrown",
+							"Chocolate",
+							"Crimson",
+						],
+						colorIndex: 0,
+						colorIncrementer: 0,
+						colorThreshold: 10,
+						getColor: function () {
+							if (this.colorIncrementer >= 10) {
+								this.colorIncrementer = 0;
+								this.colorIndex++;
+								if (this.colorIndex >= this.colorOptions.length) {
+									this.colorIndex = 0;
+								}
+							}
+							this.colorIncrementer++;
+							return this.colorOptions[this.colorIndex];
+						},
+					};
+
+					function confettiParticle(color) {
+						this.x = Math.random() * W; // x-coordinate
+						this.y = Math.random() * H - H; //y-coordinate
+						this.r = RandomFromTo(10, 15); //radius;
+						this.d = Math.random() * mp + 10; //density;
+						this.color = "#E2EAFC";
+						this.tilt = Math.floor(Math.random() * 10) - 10;
+						this.tiltAngleIncremental = Math.random() * 0.07 + 0.05;
+						this.tiltAngle = 0;
+
+						this.draw = function () {
+							ctx.beginPath();
+							ctx.lineWidth = this.r / 2;
+							ctx.strokeStyle = this.color;
+							ctx.moveTo(this.x + this.tilt + this.r / 4, this.y);
+							ctx.lineTo(this.x + this.tilt, this.y + this.tilt + this.r / 4);
+							return ctx.stroke();
+						};
+					}
+					window.onload = function () {
+						SetGlobals();
+						InitializeButton();
+						//InitializeConfetti();
+
+						window.resize = function () {
+							W = window.innerWidth;
+							H = window.innerHeight;
+							canvas.width = W;
+							canvas.height = H;
+						};
+					};
+					function InitializeButton() {
+						document.getElementById("canvas").onclick = RestartConfetti;
+						document.getElementById("stop").onclick = StopConfetti;
+					}
+					function SetGlobals() {
+						canvas = document.getElementById("canvas");
+						ctx = canvas.getContext("2d");
+						W = window.innerWidth;
+						H = window.innerHeight;
+						canvas.width = W;
+						canvas.height = H;
+					}
+
+					function InitializeConfetti() {
+						particles = [];
+						animationComplete = false;
+						for (var i = 0; i < mp; i++) {
+							var particleColor = particleColors.getColor();
+							particles.push(new confettiParticle(particleColor));
+						}
+						StartConfetti();
+					}
+
+					function Draw() {
+						ctx.clearRect(0, 0, W, H);
+						var results = [];
+						for (var i = 0; i < mp; i++) {
+							(function (j) {
+								results.push(particles[j].draw());
+							})(i);
+						}
+						Update();
+
+						return results;
+					}
+
+					function RandomFromTo(from, to) {
+						return Math.floor(Math.random() * (to - from + 1) + from);
+					}
+
+					function Update() {
+						var remainingFlakes = 0;
+						var particle;
+						angle += 0.01;
+						tiltAngle += 0.1;
+
+						for (var i = 0; i < mp; i++) {
+							particle = particles[i];
+							if (animationComplete) return;
+
+							if (!confettiActive && particle.y < -15) {
+								particle.y = H + 100;
+								continue;
+							}
+
+							stepParticle(particle, i);
+
+							if (particle.y <= H) {
+								remainingFlakes++;
+							}
+							CheckForReposition(particle, i);
+						}
+
+						if (remainingFlakes === 0) {
+							StopConfetti();
+						}
+					}
+
+					function CheckForReposition(particle, index) {
+						if (
+							(particle.x > W + 20 || particle.x < -20 || particle.y > H) &&
+							confettiActive
+						) {
+							if (index % 5 > 0 || index % 2 == 0) {
+								//66.67% of the flakes
+								repositionParticle(
+									particle,
+									Math.random() * W,
+									-10,
+									Math.floor(Math.random() * 10) - 20
+								);
+							} else {
+								if (Math.sin(angle) > 0) {
+									//Enter from the left
+									repositionParticle(
+										particle,
+										-20,
+										Math.random() * H,
+										Math.floor(Math.random() * 10) - 20
+									);
+								} else {
+									//Enter from the right
+									repositionParticle(
+										particle,
+										W + 20,
+										Math.random() * H,
+										Math.floor(Math.random() * 10) - 20
+									);
+								}
+							}
+						}
+					}
+					function stepParticle(particle, particleIndex) {
+						particle.tiltAngle += particle.tiltAngleIncremental;
+						particle.y +=
+							(Math.cos(angle + particle.d) + 3 + particle.r / 2) / 2;
+						particle.x += Math.sin(angle);
+						particle.tilt =
+							Math.sin(particle.tiltAngle - particleIndex / 3) * 15;
+					}
+
+					function repositionParticle(
+						particle,
+						xCoordinate,
+						yCoordinate,
+						tilt
+					) {
+						particle.x = xCoordinate;
+						particle.y = yCoordinate;
+						particle.tilt = tilt;
+					}
+
+					function StartConfetti() {
+						W = window.innerWidth;
+						H = window.innerHeight;
+						canvas.width = W;
+						canvas.height = H;
+						(function animloop() {
+							if (animationComplete) return null;
+							animationHandler = requestAnimFrame(animloop);
+							return Draw();
+						})();
+					}
+
+					function ClearTimers() {
+						clearTimeout(reactivationTimerHandler);
+						clearTimeout(animationHandler);
+					}
+
+					function DeactivateConfetti() {
+						confettiActive = false;
+						ClearTimers();
+					}
+
+					function StopConfetti() {
+						animationComplete = true;
+						if (ctx == undefined) return;
+						ctx.clearRect(0, 0, W, H);
+					}
+
+					function RestartConfetti() {
+						ClearTimers();
+						StopConfetti();
+						reactivationTimerHandler = setTimeout(function () {
+							confettiActive = true;
+							animationComplete = false;
+							InitializeConfetti();
+						}, 100);
+					}
+
+					window.requestAnimFrame = (function () {
+						return (
+							window.requestAnimationFrame ||
+							window.webkitRequestAnimationFrame ||
+							window.mozRequestAnimationFrame ||
+							window.oRequestAnimationFrame ||
+							window.msRequestAnimationFrame ||
+							function (callback) {
+								return window.setTimeout(callback, 1000 / 60);
+							}
+						);
+					})();
+				}
+				fire();
+			</script>
+
+			<div class="input-panel">
+				<input
+					type="text"
+					id="input-num"
+					style="
+						width: 100%;
+						height: 100%;
+						text-align: right;
+						font-size: 1.5rem;
+						border: none;
+						outline: none;
+						background-color: #edf2fb;
+					"
+					placeholder="Input Number"
+					onkeyup="
+                        var start = this.selectionStart;
+                        var end = this.selectionEnd;
+                        this.value = this.value.toUpperCase();
+                        this.setSelectionRange(start, end);
+                    "
+				/>
+				<select
+					id="input-base"
+					style="
+						border: none;
+						outline: none;
+						background-color: #ffffff;
+						border-left: 4px solid #d7e3fc;
+						right: 0;
+					"
+				>
+					<script type="text/javascript">
+						for (let i = 2; i <= 16; i++) {
+							document.write(
+								`<option id="inputbase-${i}" value="${i}">${i}</option>`
+							);
+							if (i == 2) {
+								document.getElementById(
+									`inputbase-${i}`
+								).style.backgroundColor = "#d7e3fc";
+								document.getElementById(`inputbase-${i}`).style.fontWeight =
+									"bold";
+							}
+						}
+					</script>
+				</select>
+				<script type="text/javascript">
+					document
+						.getElementById("input-base")
+						.addEventListener("change", function () {
+							for (let i = 2; i <= 16; i++) {
+								if (i == this.value) {
+									document.getElementById(
+										`inputbase-${i}`
+									).style.backgroundColor = "#d7e3fc";
+									document.getElementById(`inputbase-${i}`).style.fontWeight =
+										"bold";
+								} else {
+									document.getElementById(
+										`inputbase-${i}`
+									).style.backgroundColor = "#ffffff";
+									document.getElementById(`inputbase-${i}`).style.fontWeight =
+										"normal";
+								}
+							}
+						});
+				</script>
+			</div>
+			<div class="output-panel">
+				<div
+					id="output-num"
+					style="
+						width: 100%;
+						height: 100%;
+						text-align: right;
+						font-size: 1.5rem;
+						border: none;
+						outline: none;
+						background-color: #edf2fb;
+					"
+				></div>
+				<select
+					id="output-base"
+					style="
+						border: none;
+						outline: none;
+						background-color: #ffffff;
+						border-left: 4px solid #d7e3fc;
+						right: 0;
+					"
+				>
+					<script type="text/javascript">
+						for (let i = 2; i <= 16; i++) {
+							document.write(
+								`<option id="outputbase-${i}" value="${i}">${i}</option>`
+							);
+							if (i == 2) {
+								document.getElementById(
+									`inputbase-${i}`
+								).style.backgroundColor = "#d7e3fc";
+								document.getElementById(`inputbase-${i}`).style.fontWeight =
+									"bold";
+							}
+						}
+					</script>
+				</select>
+				<script type="text/javascript">
+					document
+						.getElementById("output-base")
+						.addEventListener("change", function () {
+							for (let i = 2; i <= 16; i++) {
+								if (i == this.value) {
+									document.getElementById(
+										`outputbase-${i}`
+									).style.backgroundColor = "#d7e3fc";
+									document.getElementById(`outputbase-${i}`).style.fontWeight =
+										"bold";
+								} else {
+									document.getElementById(
+										`outputbase-${i}`
+									).style.backgroundColor = "#ffffff";
+									document.getElementById(`outputbase-${i}`).style.fontWeight =
+										"normal";
+								}
+							}
+						});
+				</script>
+			</div>
+			<div class="buttons-zip">
+				<table>
+					<tr>
+						<script type="text/javascript">
+							for (let i = 0; i <= 4; i++) {
+								document.write(`<td><button id="${i}">${i}</button></td>`);
+							}
+						</script>
+					</tr>
+					<tr>
+						<script type="text/javascript">
+							for (let i = 5; i <= 9; i++) {
+								document.write(`<td><button id="${i}">${i}</button></td>`);
+							}
+						</script>
+					</tr>
+					<tr>
+						<td>
+							<button id="A">A</button>
+						</td>
+						<td>
+							<button id="B">B</button>
+						</td>
+						<td>
+							<button id="C">C</button>
+						</td>
+						<td>
+							<button id="D">D</button>
+						</td>
+						<td>
+							<button id="E">E</button>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button id="F">F</button>
+						</td>
+						<td colspan="2">
+							<button id="Clear" style="width: 6rem">Clear</button>
+						</td>
+						<td colspan="2">
+							<button id="Convert" style="width: 6rem">Convert</button>
+						</td>
+					</tr>
+				</table>
+				<script type="text/javascript">
+					nums.forEach((element) => {
+						document
+							.getElementById(element)
+							.addEventListener("click", function () {
+								document.getElementById("input-num").value += this.id;
+							});
+					});
+					document
+						.getElementById("Clear")
+						.addEventListener("click", function () {
+							document.getElementById("input-num").value = "";
+						});
+					document
+						.getElementById("Convert")
+						.addEventListener("click", function () {
+							let input = document
+								.getElementById("input-num")
+								.value.toUpperCase();
+							let inputBase = document.getElementById("input-base").value;
+							let outputBase = document.getElementById("output-base").value;
+							let res = parseInt(input, inputBase)
+								.toString(outputBase)
+								.toUpperCase();
+							if (input == "2020330017" || res == "2020330017") {
+								window.open("https://github.com/kidw0124");
+							}
+							let date = new Date();
+							let today =
+								date.getFullYear().toString() +
+								("0" + (date.getMonth() + 1)).slice(-2) +
+								("0" + date.getDate()).slice(-2);
+							if (input == today || res == today) {
+								document.getElementById("canvas").click();
+								//wait for 1 second
+								setTimeout(function () {
+									document.getElementById("stop").click();
+								}, 5000);
+							}
+							for (let i = 0; i < input.length; i++) {
+								if (!nums.includes(input[i])) {
+									res = "Invalid Input";
+									break;
+								}
+								let tmp = parseInt(input[i], 16);
+								if (tmp >= inputBase) {
+									document.getElementById("output-num").innerHTML =
+										"Invalid Input";
+									return;
+								}
+							}
+							if (res.length > 23) {
+								console.log(res);
+								res = "Too Long, so in console";
+							}
+							document.getElementById("output-num").innerHTML = res;
+						});
+				</script>
+			</div>
+		</div>
+		<ol id="answers-for-midterm">
+			<li>Describe my app</li>
+			<p>
+				This app is a number converter. You can convert a number from one base
+				to another base.<br />
+				It is consist of three panel, input panel, output panel, and buttons
+				panel.(with class name <code>input-panel</code>,
+				<code>output-panel</code>, <code>buttons-zip</code>)<br />
+				These three panels are in the middle of the page with classname
+				<code>baseconverter</code><br />
+				Input panel is consist of input box and select box. You can input a
+				number by keyboard or button in buttons panel, and can select a base of
+				the number. If you type a small letter, it will be converted to a big
+				letter.<br />
+				Output panel is consist of output box and select box. You can select a
+				base of the output number.<br />
+				For Input base and Output base, you can select a base 2 to 16, and the
+				number which is selected will be shown as another color and bold. The
+				default base is 2.<br />
+				Buttons panel is consist of 16 number(or alphabet) buttons and two
+				operation buttons. You can input a number by clicking the buttons. The A
+				to F button means 10 to 15.<br />
+				When you click the Clear button, the input box will be cleared.<br />
+				When you click the Convert button, the output box will be shown the
+				result of the conversion.<br />
+				The button which you hover will be shown as another color.
+			</p>
+			<li>How to Convert Numbers</li>
+			<p>
+				Use JS code to convert numbers from one base to another base.<br />
+				First, get the input number as string and the input base from the input
+				panel.<br />
+				Second, by <code>parseInt(number,inputBase)</code> function, convert the
+				input number to decimal number.<br />
+				Third, by <code>toString(outputBase)</code> function, convert the
+				decimal number to the output base with error determine<br />
+				Finally, display the output number in the output panel
+			</p>
+			<li>Key points of my design</li>
+			<p>
+				It's November now, and it became cold and coming winter.<br />
+				So I wanted designed the page with a winter theme.<br />
+				I used the snowflake and icicle image as the background image, and used
+				witer color theme for the page.<br />
+				I also wanted to make the page with cozy feeling, so I used the border
+				at least and but radius at most.<br />
+				And also I used the font which is used in the code editor or calculator,
+				so it makes the page looks like a code editor or calculator.<br />
+			</p>
+			<li>
+				1234 in base 5 is equal to
+				<b>DC</b>
+				in base 14
+			</li>
+			<li>My easter egg</li>
+			<p>
+				I made three easter eggs in my page.<br />
+				First, if you type 2020330017(my student ID) in the input box or the
+				result of output box is 2020330017, when you click the Convert button,
+				then you will be redirected to my github page with new tab.<br />
+				Second, if the result of output box is too long, then in the output box,
+				it will be shown "Too Long, so in console", and the result will be shown
+				in the console. <br />
+				Third, if you type today's date(like 20221107) in the input box or the
+				result of output box is today's date, then when you click the Convert
+				button, then the effect of snow-like will be shown in the page during
+				5seconds <br />
+			</p>
+			<li>Using public code / References</li>
+			<ul>
+				<li>I referred to the code of My practices.</li>
+				<li>
+					Color palette of Winter : Among the result of search
+					<a href="https://coolors.co/palettes/popular/winter">"winter"</a>, I
+					used
+					<a
+						href="https://coolors.co/palette/edf2fb-e2eafc-d7e3fc-ccdbfd-c1d3fe-b6ccfe-abc4ff"
+						>this palette</a
+					>
+				</li>
+				<li>
+					images :
+					<a href="https://cdn-icons-png.flaticon.com/512/2942/2942909.png"
+						>Snowflake</a
+					>,
+					<a href="https://cdn-icons-png.flaticon.com/512/6247/6247204.png">
+						Icicle
+					</a>
+				</li>
+				<li>
+					Force input to Uppercase :
+					<a
+						href="https://www.the-art-of-web.com/html/input-field-uppercase/#section_1"
+						>Link</a
+					>
+				</li>
+				<li>
+					Open new tab :
+					<a href="https://solbel.tistory.com/1132">Link</a>
+				</li>
+				<li>
+					Use background image :
+					<a href="https://www.w3schools.com/html/html_images_background.asp"
+						>Link</a
+					>
+				</li>
+				<li>
+					Make effect of snow-like :
+					<a href="https://kmkblog.tistory.com/292?category=1065511"
+						>Link os Usage</a
+					>,
+					<a
+						href="https://tistory4.daumcdn.net/tistory/3134841/skin/images/confetti_v2.js"
+						>Link of JS</a
+					>
+				</li>
+			</ul>
+		</ol>
+	</body>
+</html>
