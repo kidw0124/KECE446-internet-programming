@@ -15,7 +15,7 @@ WHERE `city`.`CountryCode` = `country`.`Code`
 AND (`country`.`Name` = 'North Korea' OR `country`.`Name` = 'South Korea'))
 as `Number of Cities in South and North Korea`;
 /* There are 70 cities are listed in South Korea,
-   13 cities are listed in South Korea,
+   13 cities are listed in North Korea,
    83 cities are listed in South and North Korea */
 
 # How many cities have more than 1 million population?
