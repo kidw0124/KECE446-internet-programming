@@ -89,7 +89,7 @@
 		<h3>2020330017 김동우</h3>
 		<form class="calculator" action="./practice10.php" method="post">
 			<div class="input-panel">
-            <?php
+				<?php
                 if (isset($_POST['equation'])) {
                     try{
                         $equation = $_POST['equation'];
@@ -99,27 +99,13 @@
                     }
                 }
             ?>
-				<input
-					type="text"
-					id="input-num"
-					style="
-						width: 100%;
-						height: 100%;
-						text-align: right;
-						font-size: 1.5rem;
-						border: none;
-						outline: none;
-						background-color: #edf2fb;
-					"
-					placeholder="Input Number"
-					onkeyup="
-                        var start = this.selectionStart;
-                        var end = this.selectionEnd;
-                        this.value = this.value.toUpperCase();
-                        this.setSelectionRange(start, end);
-                    "
-					name="equation"
-                    <?php
+				<input type="text" id="input-num" style=" width: 100%; height: 100%;
+				text-align: right; font-size: 1.5rem; border: none; outline: none;
+				background-color: #edf2fb; " placeholder="Input Number" onkeyup=" var
+				start = this.selectionStart; var end = this.selectionEnd; this.value =
+				this.value.toUpperCase(); this.setSelectionRange(start, end); "
+				name="equation"
+				<?php
                         if (isset($_POST['equation'])) {
                             echo "value=\"$equation\"";
                         }
@@ -140,12 +126,12 @@
 						background-color: #edf2fb;
 					"
 				>
-                <?php
+					<?php
                     if (isset($_POST['equation'])) {
                         echo $result;
                     }
                 ?>
-            </div>
+				</div>
 			</div>
 			<div class="buttons-zip">
 				<table>
